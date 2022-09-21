@@ -1,0 +1,17 @@
+<%- include("./../partials/header.ejs") %>
+
+    <div class="container">
+     
+      
+      <% for (message of messages ) { %>
+        <div class="mb-2">
+          <h1><%= message.content %></h1>
+          <p><%= message.created_at %></p>
+        </div>
+        
+      <% } %>
+  
+    </div>
+
+    
+<%- include('./../partials/footer.ejs') %>

@@ -1,29 +1,57 @@
 var createError = require('http-errors');
 var express = require('express');
+var session = require('express-session')
 const bodyParser = require('body-parser')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var livereload = require("livereload");
 var connectLiveReload = require("connect-livereload");
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-
+var router = express.Router();
 
 var app = express();
 
 /**
+ * bodyParser
+ */
+app.use(bodyParser.json()) // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+/**
  * liveReloadServer
  */
-const liveReloadServer = livereload.createServer();
-liveReloadServer.server.once("connection", () => {
-  setTimeout(() => {
-    liveReloadServer.refresh("/");
-  }, 100);
-});
-app.use(connectLiveReload());
+ const liveReloadServer = livereload.createServer();
+ liveReloadServer.server.once("connection", () => {
+   setTimeout(() => {
+     liveReloadServer.refresh("/");
+   }, 10);
+ });
+ app.use(connectLiveReload());
+
+
+/**
+ * Sessions
+ */
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+
+/**
+ * Router
+ */
+
+var indexRouter = require('./routes/index');
+var foodTrucks  = require('./routes/foodTrucks/ajouter');
+router.use(require('./middlewares/flash'));
+app.use( router );
+app.use('/', indexRouter);
+app.use('/foodtrucks', foodTrucks);
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,16 +64,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'dist')))
 
-app.use(bodyParser.json()) // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {
