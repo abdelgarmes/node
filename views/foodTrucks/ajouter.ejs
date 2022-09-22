@@ -1,0 +1,19 @@
+<%- include("./../partials/header.ejs") %>
+
+    <div class="container col-">
+      <div class="row justify-content-center ">
+        <div class="col-md-4 col-sm-12 align-self-center border p-3 m-3">
+          <form action="/foodtrucks/ajouter" method="post">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp">
+              <div id="nameHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>        
+      </div>
+    </div>
+
+    
+<%- include('./../partials/footer.ejs') %>
